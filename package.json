@@ -1,14 +1,12 @@
 {
-  "name": "node-http-server",
+  "name": "my-web-report",
   "version": "1.0.0",
-  "description": "Node.js example server starter project",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "node app4.js"
-  },
+  "main": "app5.js",
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.2"
+    "express": "^4.18.2",
+    "ejs": "^3.1.9"
   },
-  "keywords": []
+  "scripts": {
+    "start": "node app5.js"
+  }
 }

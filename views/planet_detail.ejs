@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title><%= category.name %> - 含有物質</title>
+</head>
+<body>
+    <h1><%= category.name %> の含有物質一覧</h1>
+    <table border="1">
+        <tr><th>ID</th><th>名称</th><th>成分詳細</th><th>操作</th></tr>
+        <% items.forEach(item => { %>
+            <tr>
+                <td><%= item.id %></td>
+                <td><%= item.name %></td>
+                <td><%= item.detail %></td>
+                <td>
+                    <form action="/delete/substances/<%= item.id %>" method="POST">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h3>物質の新規登録</h3>
+    <form action="/add/planet/<%= category.id %>" method="POST">
+        名称: <input type="text" name="name" required>
+        詳細: <input type="text" name="detail">
+        <button type="submit">登録</button>
+    </form>
+    <br><a href="/planets">戻る</a>
+</body>
+</html>

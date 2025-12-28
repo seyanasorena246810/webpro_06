@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title><%= category.name %> - 詳細</title>
+</head>
+<body>
+    <h1><%= category.name %> の人工添加物一覧</h1>
+    <table border="1">
+        <tr><th>ID</th><th>名称</th><th>詳細</th><th>操作</th></tr>
+        <% items.forEach(item => { %>
+            <tr>
+                <td><%= item.id %></td>
+                <td><%= item.name %></td>
+                <td><%= item.detail %></td>
+                <td>
+                    <form action="/delete/additives/<%= item.id %>" method="POST" style="display:inline;">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h3>新規追加</h3>
+    <form action="/add/food/<%= category.id %>" method="POST">
+        名称: <input type="text" name="name" required>
+        詳細: <input type="text" name="detail">
+        <button type="submit">追加</button>
+    </form>
+    <br><a href="/foods">戻る</a>
+</body>
+</html>

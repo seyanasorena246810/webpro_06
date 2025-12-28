@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title><%= category.name %> - 絶滅危惧種</title>
+</head>
+<body>
+    <h1><%= category.name %> に生息する絶滅危惧種</h1>
+    <table border="1">
+        <tr><th>ID</th><th>生物名</th><th>分類/状況</th><th>操作</th></tr>
+        <% items.forEach(item => { %>
+            <tr>
+                <td><%= item.id %></td>
+                <td><%= item.name %></td>
+                <td><%= item.detail %></td>
+                <td>
+                    <form action="/delete/species/<%= item.id %>" method="POST">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h3>新規生物の登録</h3>
+    <form action="/add/species/<%= category.id %>" method="POST">
+        生物名: <input type="text" name="name" required>
+        詳細: <input type="text" name="detail">
+        <button type="submit">追加</button>
+    </form>
+    <br><a href="/countries">戻る</a>
+</body>
+</html>

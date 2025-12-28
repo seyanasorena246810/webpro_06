@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>惑星システム - カテゴリ選択</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #2c3e50; }
+        .category-list { list-style: none; padding: 0; }
+        .category-item { 
+            background: #ecf0f1; 
+            margin: 10px 0; 
+            padding: 15px; 
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .category-item:hover { background: #dcdde1; }
+        .category-item a { 
+            text-decoration: none; 
+            color: #2980b9; 
+            font-weight: bold; 
+            display: block;
+        }
+        .back-link { margin-top: 20px; display: inline-block; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+    <h1>惑星システム：カテゴリ選択</h1>
+    <p>調査したい惑星を選択してください。</p>
+
+    <ul class="category-list">
+        <% categories.forEach(category => { %>
+            <li class="category-item">
+                <a href="/planets/<%= category.id %>">
+                    惑星ID: <%= category.id %> | <%= category.name %> の詳細を表示
+                </a>
+            </li>
+        <% }) %>
+    </ul>
+
+    <hr>
+    <a href="/" class="back-link">← システム選択（トップ）に戻る</a>
+
+</body>
+</html>

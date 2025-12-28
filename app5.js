@@ -1,66 +1,115 @@
+"use strict";
+
 const express = require("express");
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use("/public", express.static(__dirname + "/public"));
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/hello1", (req, res) => {
-  const message1 = "Hello world";
-  const message2 = "Bon jour";
-  res.render('show', { greet1:message1, greet2:message2});
+// データ保持用変数
+let dataStore = {
+    foods: [
+        { id: 1, name: "清涼飲料水" },
+        { id: 2, name: "菓子" }
+    ],
+    foodAdditives: [
+        { id: 101, foodId: 1, name: "アスパルテーム", detail: "人工甘味料" }
+    ],
+    planets: [
+        { id: 1, name: "地球" },
+        { id: 2, name: "火星" }
+    ],
+    substances: [
+        { id: 201, planetId: 1, name: "窒素", detail: "大気成分" }
+    ],
+    countries: [
+        { id: 1, name: "日本" },
+        { id: 2, name: "アメリカ" }
+    ],
+    species: [
+        { id: 301, countryId: 1, name: "トキ", detail: "絶滅危惧IA類" }
+    ]
+};
+
+// --- ルート定義 ---
+
+// ポータル画面
+app.get("/", (req, res) => {
+    res.render("index");
 });
 
-app.get("/hello2", (req, res) => {
-  res.render('show', { greet1:"Hello world", greet2:"Bon jour"});
+// 1. 加工食品システム (エラーが出ていないはずですが念のため確認)
+app.get("/foods", (req, res) => {
+    res.render("food", { categories: dataStore.foods });
 });
 
-app.get("/icon", (req, res) => {
-  res.render('icon', { filename:"./public/Apple_logo_black.svg", alt:"Apple Logo"});
+// 2. 惑星システム (Cannot GET /planets を解決)
+app.get("/planets", (req, res) => {
+    res.render("planet", { categories: dataStore.planets });
 });
 
-app.get("/omikuji1", (req, res) => {
-  const num = Math.floor( Math.random() * 6 + 1 );
-  let luck = '';
-  if( num==1 ) luck = '大吉';
-  else if( num==2 ) luck = '中吉';
-
-  res.send( '今日の運勢は' + luck + 'です' );
+// 3. 絶滅危惧種システム (Cannot GET /countries を解決)
+app.get("/countries", (req, res) => {
+    res.render("species", { categories: dataStore.countries });
 });
 
-app.get("/omikuji2", (req, res) => {
-  const num = Math.floor( Math.random() * 6 + 1 );
-  let luck = '';
-  if( num==1 ) luck = '大吉';
-  else if( num==2 ) luck = '中吉';
-
-  res.render( 'omikuji2', {result:luck} );
+// 各詳細画面 (ID指定)
+app.get("/foods/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const category = dataStore.foods.find(f => f.id === id);
+    const items = dataStore.foodAdditives.filter(a => a.foodId === id);
+    res.render("food_detail", { category, items });
 });
 
-app.get("/janken", (req, res) => {
-  let hand = req.query.hand;
-  let win = Number( req.query.win );
-  let total = Number( req.query.total );
-  console.log( {hand, win, total});
-  const num = Math.floor( Math.random() * 3 + 1 );
-  let cpu = '';
-  let judgement = '';
-  if( num==1 ) cpu = 'グー';
-  else if( num==2 ) cpu = 'チョキ';
-  else cpu = 'パー';
-  // ここに勝敗の判定を入れる
-  // 以下の数行は人間の勝ちの場合の処理なので，
-  // 判定に沿ってあいこと負けの処理を追加する
-  judgement = '勝ち';
-  win += 1;
-  total += 1;
-  const display = {
-    your: hand,
-    cpu: cpu,
-    judgement: judgement,
-    win: win,
-    total: total
-  }
-  res.render( 'janken', display );
+app.get("/planets/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const category = dataStore.planets.find(p => p.id === id);
+    const items = dataStore.substances.filter(s => s.planetId === id);
+    res.render("planet_detail", { category, items });
 });
 
-app.listen(8080, () => console.log("Example app listening on port 8080!"));
+app.get("/countries/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const category = dataStore.countries.find(c => c.id === id);
+    const items = dataStore.species.filter(s => s.countryId === id);
+    res.render("species_detail", { category, items });
+});
+
+// --- 共通操作: 新規追加 (POST /add/:type/:parentId) ---
+app.post("/add/:type/:parentId", (req, res) => {
+    const type = req.params.type;
+    const parentId = parseInt(req.params.parentId);
+    
+    // 新しいデータを作成（IDは重複しないよう現在時刻をベースにする）
+    const newItem = {
+        id: Date.now(), 
+        name: req.body.name,
+        detail: req.body.detail
+    };
+
+    // システムの種類（type）によって保存先と戻り先を分ける
+    if (type === 'planet') {
+        newItem.planetId = parentId;
+        dataStore.substances.push(newItem); // 惑星の物質データに追加
+        res.redirect("/planets/" + parentId);
+    } else if (type === 'food') {
+        newItem.foodId = parentId;
+        dataStore.foodAdditives.push(newItem); // 食品の添加物データに追加
+        res.redirect("/foods/" + parentId);
+    } else if (type === 'species') {
+        newItem.countryId = parentId;
+        dataStore.species.push(newItem); // 絶滅危惧種データに追加
+        res.redirect("/countries/" + parentId);
+    }
+});
+app.post("/delete/:type/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const type = req.params.type; // substances, foodAdditives, species
+    dataStore[type] = dataStore[type].filter(item => item.id !== id);
+    res.redirect("back");
+});
+
+app.listen(8080, () => {
+    console.log("Server running on http://localhost:8080");
+});

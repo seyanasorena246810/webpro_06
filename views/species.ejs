@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>絶滅危惧種システム</title>
+</head>
+<body>
+    <h1>絶滅危惧種システム：国選択</h1>
+    <ul>
+        <% categories.forEach(cat => { %>
+            <li><a href="/countries/<%= cat.id %>"><%= cat.name %></a></li>
+        <% }) %>
+    </ul>
+    <a href="/">トップへ</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>加工食品システム - カテゴリ選択</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background-color: #fffaf0; }
+        h1 { color: #d35400; border-left: 10px solid #e67e22; padding-left: 15px; }
+        .food-list { list-style: none; padding: 0; }
+        .food-card { 
+            background: white; 
+            margin: 10px 0; 
+            padding: 20px; 
+            border: 1px solid #f39c12;
+            border-radius: 5px;
+        }
+        .food-card a { 
+            text-decoration: none; 
+            color: #e67e22; 
+            font-size: 1.2em; 
+            font-weight: bold;
+        }
+        .food-card:hover { background-color: #fef5e7; }
+        .back-btn { display: inline-block; margin-top: 20px; color: #7f8c8d; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>加工食品システム：カテゴリ選択</h1>
+    <p>人工添加物を参照する食品の分類を選択してください。</p>
+
+    <div class="food-list">
+        <% categories.forEach(category => { %>
+            <div class="food-card">
+                <a href="/foods/<%= category.id %>">
+                    [<%= category.id %>] <%= category.name %> の人工添加物一覧へ
+                </a>
+            </div>
+        <% }) %>
+    </div>
+
+    <a href="/" class="back-btn">← システム選択（ポータル）に戻る</a>
+</body>
+</html>
